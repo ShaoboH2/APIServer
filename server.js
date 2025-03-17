@@ -2,7 +2,8 @@ const express = require('express'),
     app = express(),
     PORT = process.env.PORT || 8080,
     mongoose = require('mongoose'),
-    secret = require("./config/secret");
+    secret = require("./config/secret"),
+    URL = process.env.BASE_URL || "localhost";
 
 
 mongoose.connect(secret.mongoConnection, {dbName: 'AndroidProject'})
@@ -19,5 +20,5 @@ app.use('/users', Users);
 
 app.listen(
     PORT,
-    () => console.log(`it is live now on http://localhost:${PORT}`)
+    () => console.log(`it is live now on ${URL}:${PORT}`)
 );

@@ -28,7 +28,7 @@ router.get('/:id', async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 
-})
+});
 // Create one
 router.post('/', async (req, res) => {
     try {
@@ -53,6 +53,53 @@ router.post('/', async (req, res) => {
         if (err.code === 11000) {
             return res.status(409).json({ message: "Duplicate user" });
         }
+        res.status(500).json({ message: err.message });
+    }
+});
+
+// authentication
+router.post('/authentication/:email/:password', async (req, res) => {
+    const email = req.params.email;
+    const password = req.params.password;
+
+    try {
+        if (!email || !password) {
+            return res.status(400).json({ message: 'Email and Password are required' });
+        }
+
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(401).json({ message: "User not found" });
+        }
+        const isMatch = await user.validatePassword(password);
+        if (!isMatch) {
+            return res.status(401).json({ message: "Password not match" });
+        }
+        res.status(200).json({message: 'OK',
+            data: {
+                _id: user._id, 
+                userName: user.email
+            }
+        });
+    } catch (err) {
+        res.status(500).json( {message: err.message });
+    }
+});
+// patch for citylist or preference
+router.patch('/:id', async (req, res) => {
+    const userID = req.params.id;
+    const updates = req.body;
+    try {
+        const updatedUser = await User.findByIdAndUpdate(
+            userID,
+            updates,
+            {new: true, runValidators: true}
+        )
+        if (!updatedUser) {
+            return res.status(404).json({ message: 'User not found' }); 
+        }
+        res.status(201).json({message: 'OK', data: updatedUser});
+    } catch(err) {
         res.status(500).json({ message: err.message });
     }
 });
