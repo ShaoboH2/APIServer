@@ -15,7 +15,7 @@ router.get('/', async (req, res) => {
     }
 
 })
-// ger one user
+// get one user
 router.get('/:id', async (req, res) => {
     try {
         const userID = req.params.id;
@@ -90,16 +90,27 @@ router.patch('/:id', async (req, res) => {
     const userID = req.params.id;
     const updates = req.body;
     try {
-        const updatedUser = await User.findByIdAndUpdate(
-            userID,
-            updates,
-            {new: true, runValidators: true}
-        )
-        if (!updatedUser) {
-            return res.status(404).json({ message: 'User not found' }); 
+        const user = await User.findById(userID);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
         }
-        res.status(201).json({message: 'OK', data: updatedUser});
-    } catch(err) {
+
+        // If the request includes a password, update it securely
+        if (updates.password) {
+            user.setPassword(updates.password);
+        }
+
+        // Update other fields if provided
+        for (let key in updates) {
+            if (key !== "password") {
+                user[key] = updates[key];
+            }
+        }
+
+        await user.save();
+        res.status(200).json({ message: 'OK', data: user });
+
+    } catch (err) {
         res.status(500).json({ message: err.message });
     }
 });
