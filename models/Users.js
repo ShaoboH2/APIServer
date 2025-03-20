@@ -39,6 +39,15 @@ UserSchema.methods.setPassword = function (password) {
         .pbkdf2Sync(password, this.salt, 100, 64, "sha256")
         .toString("hex");
 };
+
+UserSchema.pre("save", function (next) {
+    // Ensure CityList contains only unique values
+    if (this.CityList) {
+        this.CityList = [...new Set(this.CityList)]; // Remove duplicates
+    }
+    next();
+});
+
   
 UserSchema.methods.validatePassword = function (password) {
     const hashedPassword = crypto

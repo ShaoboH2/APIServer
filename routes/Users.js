@@ -100,12 +100,7 @@ router.patch('/:id', async (req, res) => {
             user.setPassword(updates.password);
         }
 
-        if (updates.removeCity) {
-            user.CityList = user.CityList.filter(city => city !== updates.removeCity);
-        }
-        if (updates.addCity) {
-            user.CityList.push(updates.addCity);
-        }
+
         
 
         // Update other fields if provided
@@ -114,6 +109,13 @@ router.patch('/:id', async (req, res) => {
                 user[key] = updates[key];
             }
         }
+        if (updates.addCity && !user.CityList.includes(updates.addCity)) {
+            user.CityList.push(updates.addCity);
+        }
+        if (updates.removeCity) {
+            user.CityList = user.CityList.filter(city => city !== updates.removeCity);
+        }
+
 
         await user.save();
         res.status(200).json({ message: 'OK', data: user });
