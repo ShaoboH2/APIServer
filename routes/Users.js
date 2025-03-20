@@ -100,6 +100,10 @@ router.patch('/:id', async (req, res) => {
             user.setPassword(updates.password);
         }
 
+        if (updates.removeCity) {
+            user.CityList = user.CityList.filter(city => city !== updates.removeCity);
+        }
+
         // Update other fields if provided
         for (let key in updates) {
             if (key !== "password") {
