@@ -103,6 +103,10 @@ router.patch('/:id', async (req, res) => {
         if (updates.removeCity) {
             user.CityList = user.CityList.filter(city => city !== updates.removeCity);
         }
+        if (updates.addCity) {
+            user.CityList.push(updates.addCity);
+        }
+        
 
         // Update other fields if provided
         for (let key in updates) {
