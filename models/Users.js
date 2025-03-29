@@ -21,7 +21,7 @@ var UserSchema = new mongoose.Schema({
     }],
     preference: {
         type: Boolean,
-        requirted: true
+        requirted: false
     },
     dateCreated: {
         type: Date,
