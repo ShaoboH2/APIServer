@@ -35,7 +35,7 @@ router.post('/', async (req, res) => {
         const user = new User({
             email: req.body.email,
             CityList: req.body.CityList || [],
-            preference: req.body.preference
+            preference: req.body.preference || false
         });
 
 
